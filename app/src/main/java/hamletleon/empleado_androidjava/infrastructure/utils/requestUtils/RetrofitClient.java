@@ -6,6 +6,8 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+//import okhttp3.logging.HttpLoggingInterceptor;
+
 /**
  * Created by hsantana on 5/25/2017.
  * Retrofit Client Controller
@@ -17,7 +19,10 @@ public class RetrofitClient {
 
     public static Retrofit getClient(String baseUrl) {
         if (retrofit == null) {
+//            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+//            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             okHttpClient = new OkHttpClient.Builder()
+//                    .addInterceptor(interceptor)
                     .connectTimeout(2, TimeUnit.MINUTES)
                     .writeTimeout(2, TimeUnit.MINUTES)
                     .readTimeout(2, TimeUnit.MINUTES)
