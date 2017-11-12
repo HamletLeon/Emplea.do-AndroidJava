@@ -62,24 +62,33 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Parcelable listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        outState.putInt("SAVED_SPINNER_STATE", mJobCategorySpinner.getVisibility());
-        outState.putParcelable("SAVED_CRITERIA", mCriteria);
-        outState.putParcelable("SAVED_RECYCLER", listState);
-        outState.putParcelableArrayList("SAVED_LIST", new ArrayList<Parcelable>(mAdapter.getList()));
+        if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
+            Parcelable listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+            outState.putInt("SAVED_SPINNER_STATE", mJobCategorySpinner.getVisibility());
+            outState.putBoolean("SAVED_SPINNER_ENABLED", mJobCategorySpinner.isEnabled());
+            outState.putParcelable("SAVED_CRITERIA", mCriteria);
+            outState.putParcelable("SAVED_RECYCLER", listState);
+            outState.putParcelableArrayList("SAVED_LIST", new ArrayList<Parcelable>(mAdapter.getList()));
+        }
         super.onSaveInstanceState(outState);
     }
 
     private void restorePreviousState(Bundle savedInstanceState) {
         Parcelable listState = savedInstanceState.getParcelable("SAVED_RECYCLER");
         List<Job> list = savedInstanceState.getParcelableArrayList("SAVED_LIST");
-        mCriteria = savedInstanceState.getParcelable("SAVED_CRITERIA");
-        mJobCategorySpinner.setVisibility(savedInstanceState.getInt("SAVED_SPINNER_STATE", View.GONE));
-        setJobsList(list);
-        mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
-        if (mProgress.getVisibility() == View.VISIBLE) {
-            mProgress.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+        if (mRecyclerView != null) {
+            mCriteria = savedInstanceState.getParcelable("SAVED_CRITERIA");
+            if (mCriteria == null) mCriteria = new JobCriteria();
+            mJobCategorySpinner.setVisibility(savedInstanceState.getInt("SAVED_SPINNER_STATE", View.GONE));
+            mJobCategorySpinner.setEnabled(savedInstanceState.getBoolean("SAVED_SPINNER_ENABLED", true));
+            if (list != null && list.size() != 0) setJobsList(list);
+            else requestJobs();
+            if (mRecyclerView.getLayoutManager() != null)
+                mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+            if (mProgress.getVisibility() == View.VISIBLE) {
+                mProgress.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -143,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position < mJobCategoryList.size() && mProgress.getVisibility() != View.VISIBLE) {
                     String jobCategory = mJobCategoryList.get(position);
-                    if (!mCriteria.JobCategory.equals(jobCategory)) {
+                    if (mCriteria != null && !mCriteria.JobCategory.equals(jobCategory)) {
                         mJobCategorySpinner.setEnabled(false);
                         mRecyclerView.setVisibility(View.INVISIBLE);
                         mProgress.setVisibility(View.VISIBLE);
