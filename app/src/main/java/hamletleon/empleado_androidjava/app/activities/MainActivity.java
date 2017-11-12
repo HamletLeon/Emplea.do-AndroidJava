@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestJobs() {
-        if (endPageReached) return;
         CallUtil.enqueueWithRetry(mApiService.getJobsByCriteria(mCriteria.getMap()), new Callback<List<Job>>() {
             @Override
             public void onResponse(Call<List<Job>> call, Response<List<Job>> response) {
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     if (mProgress.getVisibility() == View.VISIBLE) {
                         mProgress.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.VISIBLE);
+                        mJobCategorySpinner.setEnabled(true);
                     }
                 } else {
                     Toast.makeText(MainActivity.this, "Error - " + response.message(), Toast.LENGTH_SHORT).show();
@@ -141,15 +141,16 @@ public class MainActivity extends AppCompatActivity {
         mJobCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position < mJobCategoryList.size()) {
+                if (position < mJobCategoryList.size() && mProgress.getVisibility() != View.VISIBLE) {
                     String jobCategory = mJobCategoryList.get(position);
                     if (!mCriteria.JobCategory.equals(jobCategory)) {
+                        mJobCategorySpinner.setEnabled(false);
                         mRecyclerView.setVisibility(View.INVISIBLE);
                         mProgress.setVisibility(View.VISIBLE);
                         mCriteria.JobCategory = jobCategory;
                         mCriteria.page = 1;
                         mAdapter.reset();
-                        mAdapter = null;
+                        endPageReached = false;
                         requestJobs();
                     }
                 }
