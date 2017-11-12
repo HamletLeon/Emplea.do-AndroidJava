@@ -1,6 +1,5 @@
 package hamletleon.empleado_androidjava.infrastructure.viewHolders;
 
-import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,7 @@ import hamletleon.empleado_androidjava.R;
  * ViewHolder generico de listas con diseño de Google Materials
  */
 
-public class GenericViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener {
+public abstract class GenericViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener {
     @BindView(R.id.itemCardView)
     protected CardView mItemCardView;
     @BindView(R.id.item)
@@ -51,7 +50,5 @@ public class GenericViewHolder<T> extends RecyclerView.ViewHolder implements Vie
     }
 
     @Override
-    public void onClick(View view) {
-        Context context = view.getContext();
-    }
+    public abstract void onClick(View view);
 }

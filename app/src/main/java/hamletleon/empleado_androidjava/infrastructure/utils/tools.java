@@ -22,11 +22,10 @@ import java.util.Locale;
 public final class tools {
     private static final DateFormat m_ISO8601Withms = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", new Locale("es", "ES"));
     private static final DateFormat m_ISO8601WithOutms = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", new Locale("es", "ES"));
-    private static String TAG = tools.class.getSimpleName();
 
-    public static void intentActivityActionWithMultipleExtras(Activity activity, Class classIntent, Object[] objects, String[] TAG, boolean finish) {
-        if (activity != null && classIntent != null) {
-            Intent intent = new Intent(activity, classIntent);
+    public static void intentActivityActionWithMultipleExtras(Context context, Class classIntent, Object[] objects, String[] TAG) {
+        if (context != null && classIntent != null) {
+            Intent intent = new Intent(context, classIntent);
             if (TAG != null && objects != null && TAG.length == objects.length) {
                 for (int i = 0; i < objects.length; i++) {
                     if (objects[i] instanceof Parcelable) {
@@ -38,8 +37,7 @@ public final class tools {
                     }
                 }
             }
-            activity.startActivity(intent);
-            if (finish) activity.finish();
+            context.startActivity(intent);
         } else throw new IllegalStateException();
     }
 

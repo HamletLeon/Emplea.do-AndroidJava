@@ -1,5 +1,7 @@
 package hamletleon.empleado_androidjava.infrastructure.adapters;
 
+import android.os.Parcelable;
+
 import java.util.List;
 
 import hamletleon.empleado_androidjava.infrastructure.dtos.JobCriteria;
@@ -10,7 +12,7 @@ import hamletleon.empleado_androidjava.infrastructure.dtos.JobCriteria;
  */
 
 // C extends of a PaginationParameter Entity ...
-public abstract class PaginatedAdapter<E, C extends JobCriteria> extends GenericAdapter<E, C> {
+public abstract class PaginatedAdapter<E extends Parcelable, C extends JobCriteria> extends GenericAdapter<E, C> {
     public boolean IS_FILTERED;
     private List<E> mItemsFiltered;
     private C mCriteriaFiltered;

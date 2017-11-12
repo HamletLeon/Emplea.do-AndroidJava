@@ -1,5 +1,6 @@
 package hamletleon.empleado_androidjava.infrastructure.adapters;
 
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -13,7 +14,7 @@ import hamletleon.empleado_androidjava.infrastructure.viewHolders.GenericViewHol
  * Adaptador de listas generico con diseño de Google Materials
  */
 
-public abstract class GenericAdapter<E, C extends Criteria> extends RecyclerView.Adapter<GenericViewHolder<E>> {
+public abstract class GenericAdapter<E extends Parcelable, C extends Criteria> extends RecyclerView.Adapter<GenericViewHolder<E>> {
     List<E> mItems;
     C mCriteria;
 
