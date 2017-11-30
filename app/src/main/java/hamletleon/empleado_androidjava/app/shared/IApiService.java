@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import hamletleon.empleado_androidjava.infrastructure.entities.Job;
+import hamletleon.empleado_androidjava.infrastructure.entities.JobDetails;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 
 /**
@@ -16,4 +18,7 @@ import retrofit2.http.QueryMap;
 public interface IApiService {
     @GET("empleos.json")
     Call<List<Job>> getJobsByCriteria(@QueryMap Map<String, Object> criteria);
+
+    @GET("{jobUri}.json")
+    Call<JobDetails> getJobsDetails(@Path(value = "jobUri", encoded = true) String jobUri);
 }
