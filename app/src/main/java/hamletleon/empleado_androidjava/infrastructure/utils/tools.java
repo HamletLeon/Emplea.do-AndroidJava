@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,7 +44,20 @@ public final class tools {
 
     public static void hideKeyboard(Activity mActivity, View view) {
         InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (view != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (view != null && imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void SendEmailIntent(Context context, String email, String subject, String text) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc2822");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        try {
+            context.startActivity(Intent.createChooser(intent, "Enviar correo..."));
+        } catch (android.content.ActivityNotFoundException exc) {
+            Toast.makeText(context, "No hay ningun cliente de correos instalado en su dispositivo.", Toast.LENGTH_LONG).show();
+        }
     }
 
     public static boolean checkString(String check) {

@@ -2,6 +2,7 @@ package hamletleon.empleado_androidjava.app.activities;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -83,8 +84,11 @@ public class MainActivity extends AppCompatActivity {
             mJobCategorySpinner.setEnabled(savedInstanceState.getBoolean("SAVED_SPINNER_ENABLED", true));
             if (list != null && list.size() != 0) setJobsList(list);
             else requestJobs();
-            if (mRecyclerView.getLayoutManager() != null)
+            if (mRecyclerView.getLayoutManager() != null) {
                 mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+                mRecyclerView.clearOnScrollListeners();
+                setScrollListener((LinearLayoutManager) mRecyclerView.getLayoutManager());
+            }
             if (mProgress.getVisibility() == View.VISIBLE) {
                 mProgress.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestJobs() {
         CallUtil.enqueueWithRetry(mApiService.getJobsByCriteria(mCriteria.getMap()), new Callback<List<Job>>() {
             @Override
-            public void onResponse(Call<List<Job>> call, Response<List<Job>> response) {
+            public void onResponse(@NonNull Call<List<Job>> call, @NonNull Response<List<Job>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     setJobsList(response.body());
                     if (mProgress.getVisibility() == View.VISIBLE) {
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Job>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Job>> call, @NonNull Throwable t) {
                 Toast.makeText(MainActivity.this, "Error Fatal - " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -118,15 +122,16 @@ public class MainActivity extends AppCompatActivity {
         if (list != null && list.size() != 0) {
             if (mAdapter == null) {
                 mAdapter = new JobsAdapter(list, mCriteria);
-                LinearLayoutManager manager = new LinearLayoutManager(this);
+                RecyclerView.LayoutManager manager = mRecyclerView.getLayoutManager();
+                if (manager == null) manager = new LinearLayoutManager(this);
                 mRecyclerView.setLayoutManager(manager);
                 mRecyclerView.setAdapter(mAdapter);
-                setScrollListener(manager);
+                setScrollListener((LinearLayoutManager) manager);
             } else {
                 mAdapter.onSearchPagination(list, mCriteria);
             }
             if (list.size() == mCriteria.PageSize) mCriteria.page++;
-            else endPageReached = true;
+            else if (list.size() < mCriteria.PageSize) endPageReached = true;
         }
     }
     private void setScrollListener(final LinearLayoutManager manager) {
@@ -139,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        mScrollListener.setCurrentPage(mCriteria.page);
         assert mRecyclerView != null;
         mRecyclerView.addOnScrollListener(mScrollListener);
     }

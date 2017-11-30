@@ -28,6 +28,7 @@ public class Job implements Parcelable {
     private static transient SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM 'de' yyyy", Locale.ENGLISH);
     public String jobTitle;
     public String JobLink;
+    public String JobURI;
     public String jobCompany;
     public String jobLocation;
     public String jobDate;
@@ -37,6 +38,7 @@ public class Job implements Parcelable {
     protected Job(Parcel in) {
         jobTitle = in.readString();
         JobLink = in.readString();
+        JobURI = in.readString();
         jobCompany = in.readString();
         jobLocation = in.readString();
         jobDate = in.readString();
@@ -57,6 +59,7 @@ public class Job implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(jobTitle);
         dest.writeString(JobLink);
+        dest.writeString(JobURI);
         dest.writeString(jobCompany);
         dest.writeString(jobLocation);
         dest.writeString(jobDate);
